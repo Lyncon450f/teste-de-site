@@ -1,0 +1,276 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BRBET - Simulador</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">
+            ⚽ BR<span>BET</span>
+        </div>
+
+        <nav>
+            <a href="#inicio">Início</a>
+            <a href="#jogos">Jogos</a>
+            <a href="#resultados">Resultados</a>
+        </nav>
+
+        <button class="login" onclick="abrirLogin()">
+            Entrar
+        </button>
+    </header>
+
+    <div class="aviso">
+        ⚠️ DEMONSTRAÇÃO — saldo e apostas são exclusivamente virtuais.
+    </div>
+
+    <main id="inicio">
+
+        <section class="hero">
+
+            <div class="hero-text">
+
+                <p class="categoria">
+                    BRASILEIRÃO SÉRIE A
+                </p>
+
+                <h1>
+                    Faça seu palpite
+                    <span>e acompanhe os jogos.</span>
+                </h1>
+
+                <p>
+                    Simulador de apostas esportivas baseado
+                    em partidas fictícias do Brasileirão Série A.
+                </p>
+
+                <button
+                    class="btn-principal"
+                    onclick="irParaJogos()">
+
+                    Ver jogos
+
+                </button>
+
+            </div>
+
+
+            <div class="saldo-card">
+
+                <p>
+                    SEU SALDO VIRTUAL
+                </p>
+
+                <h2 id="saldo">
+                    R$ 100,00
+                </h2>
+
+                <div class="saldo-info">
+                    🟢 Saldo exclusivamente para teste
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section id="jogos" class="secao">
+
+            <div class="titulo-secao">
+
+                <div>
+
+                    <p>
+                        BRASILEIRÃO
+                    </p>
+
+                    <h2>
+                        Jogos de hoje
+                    </h2>
+
+                </div>
+
+                <span>
+                    Rodada simulada
+                </span>
+
+            </div>
+
+
+            <div
+                id="lista-jogos"
+                class="lista-jogos">
+            </div>
+
+        </section>
+
+
+        <section
+            id="resultados"
+            class="secao">
+
+            <div class="titulo-secao">
+
+                <div>
+
+                    <p>
+                        HISTÓRICO
+                    </p>
+
+                    <h2>
+                        Resultados da simulação
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="historico"
+                class="historico">
+
+                <p class="vazio">
+                    Nenhuma simulação realizada.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <aside class="cupom">
+
+        <div class="cupom-titulo">
+
+            <h3>
+                🎟️ Seu palpite
+            </h3>
+
+            <button onclick="limparCupom()">
+                ×
+            </button>
+
+        </div>
+
+
+        <div id="cupom-conteudo">
+
+            <p class="vazio">
+                Selecione uma cotação para começar.
+            </p>
+
+        </div>
+
+
+        <div
+            id="cupom-footer"
+            class="cupom-footer">
+
+            <div class="cotacao">
+
+                <span>
+                    Cotação total
+                </span>
+
+                <strong id="cotacao-total">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="valor">
+
+                <span>
+                    Valor virtual
+                </span>
+
+                <strong>
+                    R$ 100,00
+                </strong>
+
+            </div>
+
+
+            <button
+                id="btn-simular"
+                class="btn-simular"
+                onclick="simularAposta()">
+
+                SIMULAR APOSTA
+
+            </button>
+
+
+            <small>
+                Este valor é fictício e não possui
+                qualquer valor monetário real.
+            </small>
+
+        </div>
+
+    </aside>
+
+
+    <div
+        id="modal-login"
+        class="modal">
+
+        <div class="modal-box">
+
+            <button
+                class="fechar"
+                onclick="fecharLogin()">
+
+                ×
+
+            </button>
+
+            <h2>
+                Entrar
+            </h2>
+
+            <p>
+                Área demonstrativa.
+            </p>
+
+
+            <input
+                type="email"
+                placeholder="E-mail">
+
+
+            <input
+                type="password"
+                placeholder="Senha">
+
+
+            <button
+                class="btn-principal"
+                onclick="fecharLogin()">
+
+                Entrar
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
+```
