@@ -1,274 +1,322 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>BRBET - Simulador</title>
+  <title>BetZone - Apostas Esportivas</title>
 
-    <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <header>
-        <div class="logo">
-            ⚽ BR<span>BET</span>
+  <header>
+    <div class="logo">BETZONE</div>
+
+    <nav>
+      <a href="#inicio">Início</a>
+      <a href="#jogos">Jogos</a>
+      <a href="#esportes">Esportes</a>
+    </nav>
+
+    <button class="login" onclick="login()">Entrar</button>
+  </header>
+
+
+  <section class="hero" id="inicio">
+    <h1>Viva o jogo.</h1>
+
+    <p>
+      Escolha seus eventos esportivos e monte seu cupom de apostas.
+      Este projeto é apenas uma demonstração visual.
+    </p>
+  </section>
+
+
+  <main class="container">
+
+    <section id="jogos">
+
+      <h2 class="section-title">Esportes</h2>
+
+      <div class="sports" id="esportes">
+        <button class="sport active">⚽ Futebol</button>
+        <button class="sport">🏀 Basquete</button>
+        <button class="sport">🎾 Tênis</button>
+        <button class="sport">🏎️ Fórmula 1</button>
+      </div>
+
+
+      <h2 class="section-title">Jogos de hoje</h2>
+
+
+      <!-- JOGO 1 -->
+
+      <div class="match">
+
+        <div class="match-header">
+          <span>⚽ Campeonato</span>
+          <span>Hoje • 16:00</span>
         </div>
 
-        <nav>
-            <a href="#inicio">Início</a>
-            <a href="#jogos">Jogos</a>
-            <a href="#resultados">Resultados</a>
-        </nav>
+        <div class="teams">
+          <div class="team">Flamengo</div>
 
-        <button class="login" onclick="abrirLogin()">
-            Entrar
+          <div class="vs">VS</div>
+
+          <div class="team">Palmeiras</div>
+        </div>
+
+        <div class="odds">
+
+          <button
+            class="odd"
+            onclick="addBet(
+              'Flamengo x Palmeiras',
+              'Casa',
+              1.85,
+              this
+            )"
+          >
+            <span>Casa</span>
+            <strong>1.85</strong>
+          </button>
+
+
+          <button
+            class="odd"
+            onclick="addBet(
+              'Flamengo x Palmeiras',
+              'Empate',
+              3.40,
+              this
+            )"
+          >
+            <span>Empate</span>
+            <strong>3.40</strong>
+          </button>
+
+
+          <button
+            class="odd"
+            onclick="addBet(
+              'Flamengo x Palmeiras',
+              'Fora',
+              4.10,
+              this
+            )"
+          >
+            <span>Fora</span>
+            <strong>4.10</strong>
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- JOGO 2 -->
+
+      <div class="match">
+
+        <div class="match-header">
+          <span>⚽ Campeonato</span>
+          <span>Hoje • 18:30</span>
+        </div>
+
+        <div class="teams">
+          <div class="team">Santos</div>
+
+          <div class="vs">VS</div>
+
+          <div class="team">Grêmio</div>
+        </div>
+
+        <div class="odds">
+
+          <button
+            class="odd"
+            onclick="addBet(
+              'Santos x Grêmio',
+              'Casa',
+              2.10,
+              this
+            )"
+          >
+            <span>Casa</span>
+            <strong>2.10</strong>
+          </button>
+
+
+          <button
+            class="odd"
+            onclick="addBet(
+              'Santos x Grêmio',
+              'Empate',
+              3.20,
+              this
+            )"
+          >
+            <span>Empate</span>
+            <strong>3.20</strong>
+          </button>
+
+
+          <button
+            class="odd"
+            onclick="addBet(
+              'Santos x Grêmio',
+              'Fora',
+              2.80,
+              this
+            )"
+          >
+            <span>Fora</span>
+            <strong>2.80</strong>
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- JOGO 3 -->
+
+      <div class="match">
+
+        <div class="match-header">
+          <span>⚽ Campeonato</span>
+          <span>Hoje • 21:00</span>
+        </div>
+
+        <div class="teams">
+          <div class="team">Corinthians</div>
+
+          <div class="vs">VS</div>
+
+          <div class="team">São Paulo</div>
+        </div>
+
+        <div class="odds">
+
+          <button
+            class="odd"
+            onclick="addBet(
+              'Corinthians x São Paulo',
+              'Casa',
+              2.35,
+              this
+            )"
+          >
+            <span>Casa</span>
+            <strong>2.35</strong>
+          </button>
+
+
+          <button
+            class="odd"
+            onclick="addBet(
+              'Corinthians x São Paulo',
+              'Empate',
+              3.10,
+              this
+            )"
+          >
+            <span>Empate</span>
+            <strong>3.10</strong>
+          </button>
+
+
+          <button
+            class="odd"
+            onclick="addBet(
+              'Corinthians x São Paulo',
+              'Fora',
+              2.65,
+              this
+            )"
+          >
+            <span>Fora</span>
+            <strong>2.65</strong>
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- CUPOM -->
+
+    <aside class="bet-slip">
+
+      <h2>🎟️ Seu cupom</h2>
+
+      <div id="bets">
+
+        <div class="empty">
+          Selecione uma cotação para adicioná-la ao cupom.
+        </div>
+
+      </div>
+
+
+      <div class="summary">
+
+        <div class="row">
+          <span>Cotação total</span>
+
+          <strong id="totalOdd">
+            0.00
+          </strong>
+        </div>
+
+
+        <input
+          type="number"
+          id="amount"
+          class="amount"
+          placeholder="Valor da aposta"
+          min="1"
+          oninput="calculate()"
+        >
+
+
+        <div class="row">
+          <span>Retorno estimado</span>
+
+          <strong
+            class="total"
+            id="returnValue"
+          >
+            R$ 0,00
+          </strong>
+        </div>
+
+
+        <button
+          class="bet-button"
+          onclick="placeBet()"
+        >
+          Fazer aposta demonstrativa
         </button>
-    </header>
 
-    <div class="aviso">
-        ⚠️ DEMONSTRAÇÃO — saldo e apostas são exclusivamente virtuais.
-    </div>
-
-    <main id="inicio">
-
-        <section class="hero">
-
-            <div class="hero-text">
-
-                <p class="categoria">
-                    BRASILEIRÃO SÉRIE A
-                </p>
-
-                <h1>
-                    Faça seu palpite
-                    <span>e acompanhe os jogos.</span>
-                </h1>
-
-                <p>
-                    Simulador de apostas esportivas baseado
-                    em partidas fictícias do Brasileirão Série A.
-                </p>
-
-                <button
-                    class="btn-principal"
-                    onclick="irParaJogos()">
-
-                    Ver jogos
-
-                </button>
-
-            </div>
-
-
-            <div class="saldo-card">
-
-                <p>
-                    SEU SALDO VIRTUAL
-                </p>
-
-                <h2 id="saldo">
-                    R$ 100,00
-                </h2>
-
-                <div class="saldo-info">
-                    🟢 Saldo exclusivamente para teste
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <section id="jogos" class="secao">
-
-            <div class="titulo-secao">
-
-                <div>
-
-                    <p>
-                        BRASILEIRÃO
-                    </p>
-
-                    <h2>
-                        Jogos de hoje
-                    </h2>
-
-                </div>
-
-                <span>
-                    Rodada simulada
-                </span>
-
-            </div>
-
-
-            <div
-                id="lista-jogos"
-                class="lista-jogos">
-            </div>
-
-        </section>
-
-
-        <section
-            id="resultados"
-            class="secao">
-
-            <div class="titulo-secao">
-
-                <div>
-
-                    <p>
-                        HISTÓRICO
-                    </p>
-
-                    <h2>
-                        Resultados da simulação
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="historico"
-                class="historico">
-
-                <p class="vazio">
-                    Nenhuma simulação realizada.
-                </p>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <aside class="cupom">
-
-        <div class="cupom-titulo">
-
-            <h3>
-                🎟️ Seu palpite
-            </h3>
-
-            <button onclick="limparCupom()">
-                ×
-            </button>
-
-        </div>
-
-
-        <div id="cupom-conteudo">
-
-            <p class="vazio">
-                Selecione uma cotação para começar.
-            </p>
-
-        </div>
-
-
-        <div
-            id="cupom-footer"
-            class="cupom-footer">
-
-            <div class="cotacao">
-
-                <span>
-                    Cotação total
-                </span>
-
-                <strong id="cotacao-total">
-                    -
-                </strong>
-
-            </div>
-
-
-            <div class="valor">
-
-                <span>
-                    Valor virtual
-                </span>
-
-                <strong>
-                    R$ 100,00
-                </strong>
-
-            </div>
-
-
-            <button
-                id="btn-simular"
-                class="btn-simular"
-                onclick="simularAposta()">
-
-                SIMULAR APOSTA
-
-            </button>
-
-
-            <small>
-                Este valor é fictício e não possui
-                qualquer valor monetário real.
-            </small>
-
-        </div>
+      </div>
 
     </aside>
 
-
-    <div
-        id="modal-login"
-        class="modal">
-
-        <div class="modal-box">
-
-            <button
-                class="fechar"
-                onclick="fecharLogin()">
-
-                ×
-
-            </button>
-
-            <h2>
-                Entrar
-            </h2>
-
-            <p>
-                Área demonstrativa.
-            </p>
+  </main>
 
 
-            <input
-                type="email"
-                placeholder="E-mail">
+  <footer>
+    © 2026 BetZone — Projeto demonstrativo.
+    Não realiza apostas ou transações financeiras reais.
+  </footer>
 
 
-            <input
-                type="password"
-                placeholder="Senha">
-
-
-            <button
-                class="btn-principal"
-                onclick="fecharLogin()">
-
-                Entrar
-
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 
 </body>
 </html>
