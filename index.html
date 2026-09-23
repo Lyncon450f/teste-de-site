@@ -1,92 +1,63 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="BetZone - projeto demonstrativo de interface esportiva.">
-  <title>BetZone — Central Esportiva</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Brasileirão Bet — experiência demonstrativa de palpites esportivos.">
+<title>Brasileirão Bet — Palpite do Jogo</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="header">
-    <a class="logo" href="#inicio" aria-label="BetZone início">BET<span>ZONE</span></a>
-    <nav class="nav" aria-label="Navegação principal">
-      <a href="#inicio">Início</a><a href="#jogos">Jogos</a><a href="#esportes">Esportes</a>
-    </nav>
-    <div class="header-actions">
-      <button class="notification-button" id="notificationButton" type="button" aria-label="Abrir notificações" aria-expanded="false">
-        <span class="bell" aria-hidden="true">🔔</span><span class="notification-count" id="notificationCount">0</span>
-      </button>
-      <button class="login-button" type="button" id="loginButton">Entrar</button>
-    </div>
-    <section class="notification-panel" id="notificationPanel" aria-hidden="true">
-      <div class="notification-panel-header"><div><span class="eyebrow">Central</span><h2>Notificações</h2></div>
-        <button class="clear-button" type="button" id="markAllButton">Marcar todas</button>
-      </div>
-      <div id="notificationsList" class="notifications-list"></div>
-    </section>
-  </header>
+<header class="topbar">
+  <a class="brand" href="#inicio"><span class="brand-ball">⚽</span> BRASILEIRÃO <b>BET</b></a>
+  <div class="round-status"><span class="live-dot"></span> RODADA <strong id="roundNumber">1</strong></div>
+  <button class="icon-button" id="notificationButton" aria-label="Abrir notificações">🔔<span id="notificationCount">0</span></button>
+</header>
 
-  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+<section class="hero" id="inicio">
+  <div class="hero-copy">
+    <span class="kicker">CAMPEONATO BRASILEIRO</span>
+    <h1>Seu palpite.<br><em>Seu jogo.</em></h1>
+    <p>Escolha um resultado por partida. Depois do palpite, o próximo confronto entra automaticamente em campo.</p>
+    <a class="primary-link" href="#palpite">COMEÇAR AGORA ↓</a>
+  </div>
+  <div class="score-card"><span>PALPITES</span><strong id="score">0</strong><small>acertados nesta sessão</small></div>
+</section>
 
-  <section class="hero" id="inicio">
-    <div class="hero-content"><span class="hero-label">EXPERIÊNCIA ESPORTIVA</span>
-      <h1>Viva o jogo.<br><strong>Escolha seu momento.</strong></h1>
-      <p>Uma interface moderna para explorar partidas e montar um cupom demonstrativo. Tudo aqui é apenas visual e não realiza apostas ou transações reais.</p>
-      <a class="hero-button" href="#jogos">Ver jogos</a>
+<main id="palpite" class="main">
+  <div class="section-title">
+    <div><span class="kicker">PALPITE DA VEZ</span><h2 id="matchNumber">JOGO 01</h2></div>
+    <div class="progress"><span id="progressBar"></span></div>
+  </div>
+
+  <section class="match-stage">
+    <div class="match-meta"><span id="matchRound">BRASILEIRÃO • RODADA 1</span><span id="matchTime">Hoje • 16:00</span></div>
+    <div class="teams">
+      <div class="club"><div class="shield" id="homeBadge">🔴</div><h3 id="homeTeam">Flamengo</h3><span>MANDANTE</span></div>
+      <div class="versus"><small>VS</small><strong id="matchClock">16:00</strong></div>
+      <div class="club"><div class="shield" id="awayBadge">🟢</div><h3 id="awayTeam">Palmeiras</h3><span>VISITANTE</span></div>
     </div>
-    <div class="hero-card" aria-hidden="true"><span>AO VIVO</span><strong>03</strong><small>partidas em destaque</small></div>
+    <div class="choices">
+      <button class="choice" data-pick="home"><span>CASA</span><strong>Flamengo</strong><b id="homeOdd">1.85</b></button>
+      <button class="choice" data-pick="draw"><span>EMPATE</span><strong>Empate</strong><b id="drawOdd">3.40</b></button>
+      <button class="choice" data-pick="away"><span>FORA</span><strong>Palmeiras</strong><b id="awayOdd">4.10</b></button>
+    </div>
+    <div class="hint">Clique em uma opção para registrar seu palpite e carregar o próximo jogo.</div>
   </section>
 
-  <section class="sports-section" id="esportes"><div class="section-container">
-    <div class="section-heading compact"><div><span>EXPLORE</span><h2>Esportes</h2></div></div>
-    <div class="sports-list">
-      <button class="sport active" type="button">⚽ Futebol</button><button class="sport" type="button">🏀 Basquete</button>
-      <button class="sport" type="button">🎾 Tênis</button><button class="sport" type="button">🏎️ Fórmula 1</button>
-    </div>
-  </div></section>
-
-  <main class="games-section" id="jogos"><div class="games-container"><section>
-    <div class="section-heading"><div><span>DESTAQUES</span><h2>Jogos de hoje</h2></div><span class="date">Atualizado agora</span></div>
-
-    <article class="match"><div class="match-top"><span>⚽ Campeonato</span><span>Hoje • 16:00</span></div>
-      <div class="teams"><div class="team"><span class="team-icon">🔴</span>Flamengo</div><span class="versus">VS</span><div class="team"><span class="team-icon">🟢</span>Palmeiras</div></div>
-      <div class="odds">
-        <button class="odd" type="button" data-game="Flamengo x Palmeiras" data-option="Casa" data-odd="1.85"><small>Casa</small><strong>1.85</strong></button>
-        <button class="odd" type="button" data-game="Flamengo x Palmeiras" data-option="Empate" data-odd="3.40"><small>Empate</small><strong>3.40</strong></button>
-        <button class="odd" type="button" data-game="Flamengo x Palmeiras" data-option="Fora" data-odd="4.10"><small>Fora</small><strong>4.10</strong></button>
-      </div>
-    </article>
-
-    <article class="match"><div class="match-top"><span>⚽ Campeonato</span><span>Hoje • 18:30</span></div>
-      <div class="teams"><div class="team"><span class="team-icon">⚪</span>Santos</div><span class="versus">VS</span><div class="team"><span class="team-icon">🔵</span>Grêmio</div></div>
-      <div class="odds">
-        <button class="odd" type="button" data-game="Santos x Grêmio" data-option="Casa" data-odd="2.10"><small>Casa</small><strong>2.10</strong></button>
-        <button class="odd" type="button" data-game="Santos x Grêmio" data-option="Empate" data-odd="3.20"><small>Empate</small><strong>3.20</strong></button>
-        <button class="odd" type="button" data-game="Santos x Grêmio" data-option="Fora" data-odd="2.80"><small>Fora</small><strong>2.80</strong></button>
-      </div>
-    </article>
-
-    <article class="match"><div class="match-top"><span>⚽ Campeonato</span><span>Hoje • 21:00</span></div>
-      <div class="teams"><div class="team"><span class="team-icon">⚫</span>Corinthians</div><span class="versus">VS</span><div class="team"><span class="team-icon">⚪</span>São Paulo</div></div>
-      <div class="odds">
-        <button class="odd" type="button" data-game="Corinthians x São Paulo" data-option="Casa" data-odd="2.35"><small>Casa</small><strong>2.35</strong></button>
-        <button class="odd" type="button" data-game="Corinthians x São Paulo" data-option="Empate" data-odd="3.10"><small>Empate</small><strong>3.10</strong></button>
-        <button class="odd" type="button" data-game="Corinthians x São Paulo" data-option="Fora" data-odd="2.65"><small>Fora</small><strong>2.65</strong></button>
-      </div>
-    </article>
+  <section class="history-card">
+    <div><span class="kicker">SESSÃO</span><h2>Seus palpites</h2></div>
+    <div id="history" class="history-empty">Você ainda não fez nenhum palpite.</div>
   </section>
+</main>
 
-  <aside class="bet-slip"><div class="bet-slip-header"><div><span class="eyebrow">DEMONSTRAÇÃO</span><h2>🎟️ Seu cupom</h2></div><span id="betCount">0</span></div>
-    <div id="bets"><div class="empty"><div class="empty-icon">🎟️</div><p>Nenhuma seleção ainda</p><small>Escolha uma cotação para adicioná-la ao cupom.</small></div></div>
-    <div class="summary"><div class="summary-row"><span>Cotação total</span><strong id="totalOdd">0.00</strong></div>
-      <label for="amount">Valor demonstrativo</label><div class="money-input"><span>R$</span><input type="number" id="amount" placeholder="0,00" min="1" step="0.01" inputmode="decimal"></div>
-      <div class="summary-row return"><span>Retorno estimado</span><strong id="returnValue">R$ 0,00</strong></div>
-      <button class="bet-button" type="button" id="placeBetButton">Simular aposta</button><small class="demo-note">Nenhuma transação financeira é realizada.</small>
-    </div>
-  </aside></div></main>
+<div id="notificationPanel" class="notifications">
+  <div class="notifications-head"><strong>Notificações</strong><button id="clearNotifications">Marcar como lidas</button></div>
+  <div id="notificationsList"></div>
+</div>
+<div id="toastContainer" class="toasts"></div>
 
-  <footer><div class="footer-logo">BET<span>ZONE</span></div><p>© 2026 BetZone — Projeto demonstrativo. Não realiza apostas ou transações financeiras reais.</p></footer>
-  <script src="script.js?v=4"></script>
+<footer>BRASILEIRÃO <b>BET</b> • Projeto demonstrativo • Nenhuma aposta ou transação financeira é realizada.</footer>
+<script src="script.js?v=5"></script>
 </body>
 </html>
