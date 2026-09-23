@@ -1,24 +1,302 @@
-let bets=[];
-let notifications=JSON.parse(localStorage.getItem("betzone_notifications")||"null")||[
-{id:1,title:"Bem-vindo ao BetZone",message:"Explore os jogos e monte seu cupom demonstrativo.",time:"Agora",read:false,icon:"👋"},
-{id:2,title:"Interface atualizada",message:"A central de notificações já está disponível.",time:"Agora",read:false,icon:"✨"},
-{id:3,title:"Modo demonstração",message:"Nenhuma aposta ou transação financeira é realizada.",time:"Hoje",read:true,icon:"🛡️"}];
-document.addEventListener("DOMContentLoaded",()=>{updateSlip();calculate();setupSports();setupAmount();setupNotifications();renderNotifications();});
-function setupNotifications(){const b=document.getElementById("notificationButton"),p=document.getElementById("notificationPanel");if(!b||!p)return;b.addEventListener("click",e=>{e.stopPropagation();const o=p.classList.toggle("open");p.setAttribute("aria-hidden",String(!o));b.setAttribute("aria-expanded",String(o));});document.addEventListener("click",e=>{if(!p.contains(e.target)&&!b.contains(e.target)){p.classList.remove("open");p.setAttribute("aria-hidden","true");b.setAttribute("aria-expanded","false");}});}
-function saveNotifications(){localStorage.setItem("betzone_notifications",JSON.stringify(notifications));}
-function renderNotifications(){const l=document.getElementById("notificationsList"),c=document.getElementById("notificationCount");if(!l||!c)return;const u=notifications.filter(n=>!n.read).length;c.textContent=u;c.classList.toggle("visible",u>0);if(!notifications.length){l.innerHTML="<div class=\"notification-empty\">Tudo certo por aqui. Nenhuma notificação.</div>";return;}l.innerHTML=notifications.map(n=>"<button class=\"notification-item "+(n.read?"":"unread")+" \" type=\"button\" data-id=\""+n.id+"\"><span class=\"notification-icon\">"+(n.icon||"🔔")+"</span><span class=\"notification-content\"><strong>"+escapeHtml(n.title)+"</strong><p>"+escapeHtml(n.message)+"</p><span class=\"notification-time\">"+escapeHtml(n.time||"Agora")+"</span></span></button>").join("");l.querySelectorAll(".notification-item").forEach(i=>i.addEventListener("click",()=>markNotificationRead(Number(i.dataset.id))));}
-function escapeHtml(v){return String(v).replace(/[&<>"\x27]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;",\x27:"&#039;"}[c]));}
-function addNotification(t,m,icon){notifications.unshift({id:Date.now(),title:t,message:m,time:"Agora",read:false,icon:icon||"🔔"});notifications=notifications.slice(0,12);saveNotifications();renderNotifications();showToast(t,m);}
-function markNotificationRead(id){const n=notifications.find(x=>x.id===id);if(!n)return;n.read=true;saveNotifications();renderNotifications();}
-function markAllNotificationsRead(){notifications.forEach(n=>n.read=true);saveNotifications();renderNotifications();showToast("Notificações atualizadas","Tudo foi marcado como lido.","✓");}
-function showToast(t,m){const c=document.getElementById("toastContainer");if(!c)return;const x=document.createElement("div");x.className="toast";x.innerHTML="<strong>"+escapeHtml(t)+"</strong><span>"+escapeHtml(m)+"</span>";c.appendChild(x);setTimeout(()=>x.remove(),3500);}
-function addBet(game,option,odd,button){const i=bets.findIndex(b=>b.game===game);const n={game:game,option:option,odd:Number(odd)};if(i!==-1)bets[i]=n;else bets.push(n);document.querySelectorAll(".odd").forEach(x=>x.classList.remove("selected"));restoreSelections();updateSlip();calculate();addNotification("Seleção adicionada",game+" • "+option+" • cotação "+Number(odd).toFixed(2),"🎯");}
-function updateSlip(){const c=document.getElementById("bets"),count=document.getElementById("betCount");if(!c)return;if(count)count.textContent=bets.length;if(!bets.length){c.innerHTML="<div class=\"empty\"><div class=\"empty-icon\">🎟️</div><p>Nenhuma seleção ainda</p><small>Escolha uma cotação para adicioná-la ao cupom.</small></div>";return;}c.innerHTML="";bets.forEach((bet,index)=>{const item=document.createElement("div");item.className="bet";item.innerHTML="<span class=\"remove\" role=\"button\" tabindex=\"0\">×</span><div class=\"bet-title\">"+escapeHtml(bet.game)+"</div><div class=\"bet-info\">"+escapeHtml(bet.option)+" • Cotação "+bet.odd.toFixed(2)+"</div>";item.querySelector(".remove").addEventListener("click",()=>removeBet(index));c.appendChild(item);});}
-function removeBet(index){if(index<0||index>=bets.length)return;const r=bets[index];bets.splice(index,1);restoreSelections();updateSlip();calculate();addNotification("Seleção removida",r.game+" foi removido do cupom.","🗑️");}
-function restoreSelections(){document.querySelectorAll(".odd").forEach(b=>{const o=b.getAttribute("onclick");if(!o)return;bets.forEach(x=>{if(o.includes("\x27"+x.game+"\x27")&&o.includes("\x27"+x.option+"\x27"))b.classList.add("selected");});});}
-function calculate(){const total=bets.length?bets.reduce((t,b)=>t*b.odd,1):0;const e=document.getElementById("totalOdd");if(e)e.textContent=total.toFixed(2);calculateReturn(total);}
-function calculateReturn(total){const a=document.getElementById("amount"),r=document.getElementById("returnValue");if(!a||!r)return;const v=Number(a.value);r.textContent=(!v||v<=0||!bets.length)?"R$ 0,00":(v*total).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
-function setupAmount(){const a=document.getElementById("amount");if(a)a.addEventListener("input",calculate);}
-function setupSports(){const bs=document.querySelectorAll(".sport");bs.forEach(b=>b.addEventListener("click",()=>{bs.forEach(x=>x.classList.remove("active"));b.classList.add("active");addNotification("Esporte selecionado",b.textContent.trim()+" está em destaque.","🏆");}));}
-function login(){addNotification("Login demonstrativo","A área de login é apenas uma demonstração visual.","👤");}
-function placeBet(){if(!bets.length){addNotification("Cupom vazio","Selecione pelo menos uma cotação para simular.","⚠️");return;}const a=Number(document.getElementById("amount").value);if(!a||a<=0){addNotification("Valor inválido","Digite um valor demonstrativo maior que zero.","⚠️");return;}const total=bets.reduce((t,b)=>t*b.odd,1),r=a*total;addNotification("Simulação concluída","Retorno estimado de "+r.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})+". Nenhuma transação real foi realizada.","✅");}
+let bets = [];
+
+let notifications = JSON.parse(localStorage.getItem("betzone_notifications") || "null") || [
+  { id: 1, title: "Bem-vindo ao BetZone", message: "Explore os jogos e monte seu cupom demonstrativo.", time: "Agora", read: false, icon: "👋" },
+  { id: 2, title: "Interface atualizada", message: "A central de notificações já está disponível.", time: "Agora", read: false, icon: "✨" },
+  { id: 3, title: "Modo demonstração", message: "Nenhuma aposta ou transação financeira é realizada.", time: "Hoje", read: true, icon: "🛡️" }
+];
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateSlip();
+  calculate();
+  setupSports();
+  setupAmount();
+  setupNotifications();
+  renderNotifications();
+});
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[char]));
+}
+
+function setupNotifications() {
+  const button = document.getElementById("notificationButton");
+  const panel = document.getElementById("notificationPanel");
+  if (!button || !panel) return;
+
+  button.addEventListener("click", event => {
+    event.stopPropagation();
+    const open = panel.classList.toggle("open");
+    panel.setAttribute("aria-hidden", String(!open));
+    button.setAttribute("aria-expanded", String(open));
+  });
+
+  document.addEventListener("click", event => {
+    if (!panel.contains(event.target) && !button.contains(event.target)) {
+      panel.classList.remove("open");
+      panel.setAttribute("aria-hidden", "true");
+      button.setAttribute("aria-expanded", "false");
+    }
+  });
+}
+
+function saveNotifications() {
+  localStorage.setItem("betzone_notifications", JSON.stringify(notifications));
+}
+
+function renderNotifications() {
+  const list = document.getElementById("notificationsList");
+  const count = document.getElementById("notificationCount");
+  if (!list || !count) return;
+
+  const unread = notifications.filter(notification => !notification.read).length;
+  count.textContent = unread;
+  count.classList.toggle("visible", unread > 0);
+
+  if (!notifications.length) {
+    list.innerHTML = '<div class="notification-empty">Tudo certo por aqui. Nenhuma notificação.</div>';
+    return;
+  }
+
+  list.innerHTML = notifications.map(notification => `
+    <button class="notification-item ${notification.read ? "" : "unread"}" type="button" data-id="${notification.id}">
+      <span class="notification-icon">${notification.icon || "🔔"}</span>
+      <span class="notification-content">
+        <strong>${escapeHtml(notification.title)}</strong>
+        <p>${escapeHtml(notification.message)}</p>
+        <span class="notification-time">${escapeHtml(notification.time || "Agora")}</span>
+      </span>
+    </button>
+  `).join("");
+
+  list.querySelectorAll(".notification-item").forEach(item => {
+    item.addEventListener("click", () => markNotificationRead(Number(item.dataset.id)));
+  });
+}
+
+function addNotification(title, message, icon = "🔔") {
+  notifications.unshift({
+    id: Date.now(),
+    title,
+    message,
+    time: "Agora",
+    read: false,
+    icon
+  });
+
+  notifications = notifications.slice(0, 12);
+  saveNotifications();
+  renderNotifications();
+  showToast(title, message);
+}
+
+function markNotificationRead(id) {
+  const notification = notifications.find(item => item.id === id);
+  if (!notification) return;
+
+  notification.read = true;
+  saveNotifications();
+  renderNotifications();
+}
+
+function markAllNotificationsRead() {
+  notifications.forEach(notification => {
+    notification.read = true;
+  });
+
+  saveNotifications();
+  renderNotifications();
+  showToast("Notificações atualizadas", "Tudo foi marcado como lido.", "✓");
+}
+
+function showToast(title, message) {
+  const container = document.getElementById("toastContainer");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span>`;
+  container.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 3500);
+}
+
+function addBet(game, option, odd) {
+  const index = bets.findIndex(bet => bet.game === game);
+  const selection = { game, option, odd: Number(odd) };
+
+  if (index !== -1) {
+    bets[index] = selection;
+  } else {
+    bets.push(selection);
+  }
+
+  document.querySelectorAll(".odd").forEach(button => {
+    button.classList.remove("selected");
+  });
+
+  restoreSelections();
+  updateSlip();
+  calculate();
+  addNotification("Seleção adicionada", `${game} • ${option} • cotação ${Number(odd).toFixed(2)}`, "🎯");
+}
+
+function updateSlip() {
+  const container = document.getElementById("bets");
+  const count = document.getElementById("betCount");
+  if (!container) return;
+
+  if (count) count.textContent = bets.length;
+
+  if (!bets.length) {
+    container.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🎟️</div>
+        <p>Nenhuma seleção ainda</p>
+        <small>Escolha uma cotação para adicioná-la ao cupom.</small>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = "";
+
+  bets.forEach((bet, index) => {
+    const item = document.createElement("div");
+    item.className = "bet";
+    item.innerHTML = `
+      <button class="remove" type="button" aria-label="Remover seleção">×</button>
+      <div class="bet-title">${escapeHtml(bet.game)}</div>
+      <div class="bet-info">${escapeHtml(bet.option)} • Cotação ${bet.odd.toFixed(2)}</div>
+    `;
+
+    item.querySelector(".remove").addEventListener("click", () => removeBet(index));
+    container.appendChild(item);
+  });
+}
+
+function removeBet(index) {
+  if (index < 0 || index >= bets.length) return;
+
+  const removed = bets[index];
+  bets.splice(index, 1);
+
+  restoreSelections();
+  updateSlip();
+  calculate();
+  addNotification("Seleção removida", `${removed.game} foi removido do cupom.`, "🗑️");
+}
+
+function restoreSelections() {
+  document.querySelectorAll(".odd").forEach(button => {
+    button.classList.remove("selected");
+
+    const onclick = button.getAttribute("onclick") || "";
+
+    bets.forEach(bet => {
+      if (
+        onclick.includes("'" + bet.game + "'") &&
+        onclick.includes("'" + bet.option + "'")
+      ) {
+        button.classList.add("selected");
+      }
+    });
+  });
+}
+
+function calculate() {
+  const total = bets.length
+    ? bets.reduce((sum, bet) => sum * bet.odd, 1)
+    : 0;
+
+  const totalOdd = document.getElementById("totalOdd");
+  if (totalOdd) totalOdd.textContent = total.toFixed(2);
+
+  calculateReturn(total);
+}
+
+function calculateReturn(total) {
+  const amount = document.getElementById("amount");
+  const returnValue = document.getElementById("returnValue");
+  if (!amount || !returnValue) return;
+
+  const value = Number(amount.value);
+
+  returnValue.textContent =
+    !value || value <= 0 || !bets.length
+      ? "R$ 0,00"
+      : (value * total).toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL"
+        });
+}
+
+function setupAmount() {
+  const amount = document.getElementById("amount");
+  if (amount) amount.addEventListener("input", calculate);
+}
+
+function setupSports() {
+  const sports = document.querySelectorAll(".sport");
+
+  sports.forEach(button => {
+    button.addEventListener("click", () => {
+      sports.forEach(item => item.classList.remove("active"));
+      button.classList.add("active");
+
+      addNotification(
+        "Esporte selecionado",
+        `${button.textContent.trim()} está em destaque.`,
+        "🏆"
+      );
+    });
+  });
+}
+
+function login() {
+  addNotification(
+    "Login demonstrativo",
+    "A área de login é apenas uma demonstração visual.",
+    "👤"
+  );
+}
+
+function placeBet() {
+  if (!bets.length) {
+    addNotification(
+      "Cupom vazio",
+      "Selecione pelo menos uma cotação para simular.",
+      "⚠️"
+    );
+    return;
+  }
+
+  const amount = Number(document.getElementById("amount").value);
+
+  if (!amount || amount <= 0) {
+    addNotification(
+      "Valor inválido",
+      "Digite um valor demonstrativo maior que zero.",
+      "⚠️"
+    );
+    return;
+  }
+
+  const total = bets.reduce((sum, bet) => sum * bet.odd, 1);
+  const result = amount * total;
+
+  addNotification(
+    "Simulação concluída",
+    `Retorno estimado de ${result.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    })}. Nenhuma transação real foi realizada.`,
+    "✅"
+  );
+}
