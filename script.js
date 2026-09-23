@@ -12,8 +12,24 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSports();
   setupAmount();
   setupNotifications();
+  setupBetButtons();
+  setupActions();
   renderNotifications();
 });
+
+function setupBetButtons() {
+  document.querySelectorAll(".odd").forEach(button => {
+    button.addEventListener("click", () => {
+      addBet(button.dataset.game, button.dataset.option, Number(button.dataset.odd));
+    });
+  });
+}
+
+function setupActions() {
+  document.getElementById("loginButton")?.addEventListener("click", login);
+  document.getElementById("placeBetButton")?.addEventListener("click", placeBet);
+  document.getElementById("markAllButton")?.addEventListener("click", markAllNotificationsRead);
+}
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, char => ({
@@ -197,13 +213,8 @@ function restoreSelections() {
   document.querySelectorAll(".odd").forEach(button => {
     button.classList.remove("selected");
 
-    const onclick = button.getAttribute("onclick") || "";
-
     bets.forEach(bet => {
-      if (
-        onclick.includes("'" + bet.game + "'") &&
-        onclick.includes("'" + bet.option + "'")
-      ) {
+      if (button.dataset.game === bet.game && button.dataset.option === bet.option) {
         button.classList.add("selected");
       }
     });
