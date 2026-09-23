@@ -1,9 +1,3 @@
-javascript
-// ==========================================
-// BRBET - SIMULADOR
-// ==========================================
-
-// Saldo inicial fictício
 let saldo = 100;
 
 
@@ -636,4 +630,3 @@ mostrarJogos();
 atualizarSaldo();
 
 atualizarCupom();
-```
