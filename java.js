@@ -1,75 +1,110 @@
 // ==========================================
-// BETZONE - SCRIPT PRINCIPAL
+// BETZONE - JAVASCRIPT
 // ==========================================
-
-
-// ------------------------------------------
-// VARIÁVEIS
-// ------------------------------------------
 
 let bets = [];
 
 
-// ------------------------------------------
-// ADICIONAR APOSTA
-// ------------------------------------------
+// ==========================================
+// INICIAR SITE
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    console.log("BetZone iniciado!");
+
+    updateSlip();
+    calculate();
+
+    setupSports();
+
+    setupAmount();
+
+});
+
+
+// ==========================================
+// SELECIONAR COTAÇÃO
+// ==========================================
 
 function addBet(game, option, odd, button) {
 
-    // Verifica se já existe uma aposta
-    // nesse mesmo jogo
-    const existingBet = bets.find(
+    console.log("Aposta selecionada:", game, option, odd);
+
+
+    // Procura se já existe aposta desse jogo
+    const index = bets.findIndex(
         bet => bet.game === game
     );
 
-    if (existingBet) {
 
-        existingBet.option = option;
-        existingBet.odd = odd;
+    const newBet = {
+        game: game,
+        option: option,
+        odd: Number(odd)
+    };
+
+
+    // Se já existe, substitui
+    if (index !== -1) {
+
+        bets[index] = newBet;
 
     } else {
 
-        bets.push({
-            game: game,
-            option: option,
-            odd: odd
-        });
+        bets.push(newBet);
 
     }
 
 
-    // Remove a seleção de todos os botões
+    // Remove seleção de todos os botões
     document.querySelectorAll(".odd").forEach(btn => {
+
         btn.classList.remove("selected");
+
     });
 
 
     // Seleciona o botão clicado
-    button.classList.add("selected");
+    if (button) {
+
+        button.classList.add("selected");
+
+    }
 
 
-    // Atualiza o cupom
-    updateBetSlip();
+    updateSlip();
 
-    // Atualiza os valores
-    calculateTotal();
+    calculate();
+
 }
 
 
-// ------------------------------------------
+// ==========================================
 // ATUALIZAR CUPOM
-// ------------------------------------------
+// ==========================================
 
-function updateBetSlip() {
+function updateSlip() {
 
-    const betsContainer =
+    const container =
         document.getElementById("bets");
 
 
-    // Se não houver apostas
+    if (!container) {
+
+        console.error(
+            "Elemento #bets não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    // Nenhuma aposta
     if (bets.length === 0) {
 
-        betsContainer.innerHTML = `
+        container.innerHTML = `
             <div class="empty">
                 Selecione uma cotação para
                 adicioná-la ao cupom.
@@ -77,28 +112,26 @@ function updateBetSlip() {
         `;
 
         return;
+
     }
 
 
-    // Limpa o cupom
-    betsContainer.innerHTML = "";
+    container.innerHTML = "";
 
 
-    // Cria cada aposta
     bets.forEach((bet, index) => {
 
-        const betElement =
+        const item =
             document.createElement("div");
 
 
-        betElement.className = "bet";
+        item.className = "bet";
 
 
-        betElement.innerHTML = `
-
+        item.innerHTML = `
             <span
                 class="remove"
-                onclick="removeBet(${index})"
+                data-index="${index}"
             >
                 ×
             </span>
@@ -111,47 +144,84 @@ function updateBetSlip() {
                 ${bet.option}
                 • Cotação ${bet.odd.toFixed(2)}
             </div>
-
         `;
 
 
-        betsContainer.appendChild(
-            betElement
-        );
+        container.appendChild(item);
 
     });
 
+
+    // Eventos dos botões X
+    container
+        .querySelectorAll(".remove")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const index =
+                        Number(
+                            button.dataset.index
+                        );
+
+                    removeBet(index);
+
+                }
+            );
+
+        });
+
 }
 
 
-// ------------------------------------------
+// ==========================================
 // REMOVER APOSTA
-// ------------------------------------------
+// ==========================================
 
 function removeBet(index) {
 
-    // Remove do array
+    if (
+        index < 0 ||
+        index >= bets.length
+    ) {
+
+        return;
+
+    }
+
+
     bets.splice(index, 1);
 
 
-    // Atualiza cupom
-    updateBetSlip();
+    // Remove todas as seleções
+    document.querySelectorAll(".odd")
+        .forEach(button => {
+
+            button.classList.remove(
+                "selected"
+            );
+
+        });
 
 
-    // Recalcula
-    calculateTotal();
+    // Reaplica as seleções
+    restoreSelections();
 
 
-    // Atualiza os botões selecionados
-    updateSelectedButtons();
+    updateSlip();
+
+    calculate();
+
 }
 
 
-// ------------------------------------------
-// ATUALIZAR BOTÕES
-// ------------------------------------------
+// ==========================================
+// RESTAURAR SELEÇÕES
+// ==========================================
 
-function updateSelectedButtons() {
+function restoreSelections() {
 
     const buttons =
         document.querySelectorAll(".odd");
@@ -159,46 +229,27 @@ function updateSelectedButtons() {
 
     buttons.forEach(button => {
 
-        button.classList.remove(
-            "selected"
-        );
-
-    });
+        const onclick =
+            button.getAttribute("onclick");
 
 
-    // Marca novamente as apostas existentes
-    bets.forEach(bet => {
+        if (!onclick) return;
 
-        buttons.forEach(button => {
 
-            const text =
-                button.parentElement
-                    .parentElement
-                    .querySelector(".teams")
-                    .innerText;
-
+        bets.forEach(bet => {
 
             if (
-                text.includes(
-                    bet.game.split(" x ")[0]
+                onclick.includes(
+                    `'${bet.game}'`
                 ) &&
-                text.includes(
-                    bet.game.split(" x ")[1]
+                onclick.includes(
+                    `'${bet.option}'`
                 )
             ) {
 
-                const option =
-                    button.querySelector("span")
-                        ?.innerText;
-
-
-                if (option === bet.option) {
-
-                    button.classList.add(
-                        "selected"
-                    );
-
-                }
+                button.classList.add(
+                    "selected"
+                );
 
             }
 
@@ -209,16 +260,15 @@ function updateSelectedButtons() {
 }
 
 
-// ------------------------------------------
-// CALCULAR COTAÇÃO TOTAL
-// ------------------------------------------
+// ==========================================
+// CALCULAR COTAÇÃO
+// ==========================================
 
-function calculateTotal() {
+function calculate() {
 
     let totalOdd = 1;
 
 
-    // Nenhuma aposta
     if (bets.length === 0) {
 
         totalOdd = 0;
@@ -234,26 +284,35 @@ function calculateTotal() {
     }
 
 
-    // Mostra cotação
-    document.getElementById(
-        "totalOdd"
-    ).textContent =
-        totalOdd.toFixed(2);
+    const totalElement =
+        document.getElementById(
+            "totalOdd"
+        );
 
 
-    // Calcula retorno
+    if (totalElement) {
+
+        totalElement.textContent =
+            totalOdd.toFixed(2);
+
+    }
+
+
     calculateReturn(totalOdd);
+
 }
 
 
-// ------------------------------------------
+// ==========================================
 // CALCULAR RETORNO
-// ------------------------------------------
+// ==========================================
 
 function calculateReturn(totalOdd) {
 
-    const amountInput =
-        document.getElementById("amount");
+    const amountElement =
+        document.getElementById(
+            "amount"
+        );
 
 
     const returnElement =
@@ -262,8 +321,32 @@ function calculateReturn(totalOdd) {
         );
 
 
+    if (
+        !amountElement ||
+        !returnElement
+    ) {
+
+        return;
+
+    }
+
+
     const amount =
-        Number(amountInput.value) || 0;
+        Number(amountElement.value);
+
+
+    if (
+        !amount ||
+        amount <= 0 ||
+        bets.length === 0
+    ) {
+
+        returnElement.textContent =
+            "R$ 0,00";
+
+        return;
+
+    }
 
 
     const result =
@@ -282,36 +365,98 @@ function calculateReturn(totalOdd) {
 }
 
 
-// ------------------------------------------
-// ALTERAÇÃO DO VALOR
-// ------------------------------------------
+// ==========================================
+// CAMPO DE VALOR
+// ==========================================
 
-document
-    .getElementById("amount")
-    .addEventListener(
+function setupAmount() {
+
+    const amount =
+        document.getElementById(
+            "amount"
+        );
+
+
+    if (!amount) return;
+
+
+    amount.addEventListener(
         "input",
-        calculateTotal
+        calculate
     );
 
+}
 
-// ------------------------------------------
-// FAZER APOSTA
-// ------------------------------------------
+
+// ==========================================
+// BOTÕES DE ESPORTES
+// ==========================================
+
+function setupSports() {
+
+    const buttons =
+        document.querySelectorAll(
+            ".sport"
+        );
+
+
+    buttons.forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                buttons.forEach(btn => {
+
+                    btn.classList.remove(
+                        "active"
+                    );
+
+                });
+
+
+                button.classList.add(
+                    "active"
+                );
+
+            }
+        );
+
+    });
+
+}
+
+
+// ==========================================
+// BOTÃO ENTRAR
+// ==========================================
+
+function login() {
+
+    alert(
+        "Área de login demonstrativa."
+    );
+
+}
+
+
+// ==========================================
+// BOTÃO DE APOSTA
+// ==========================================
 
 function placeBet() {
 
-    // Verifica apostas
     if (bets.length === 0) {
 
         alert(
-            "⚠️ Seu cupom está vazio."
+            "Selecione pelo menos uma cotação."
         );
 
         return;
+
     }
 
 
-    // Pega valor
     const amount =
         Number(
             document.getElementById(
@@ -320,25 +465,42 @@ function placeBet() {
         );
 
 
-    // Verifica valor
     if (
         !amount ||
         amount <= 0
     ) {
 
         alert(
-            "⚠️ Digite um valor válido."
+            "Digite um valor válido."
         );
 
         return;
+
     }
 
 
-    // Apenas demonstração
-    alert(
-        "✅ Cupom criado com sucesso!\n\n" +
+    const totalOdd =
+        bets.reduce(
+            (total, bet) =>
+                total * bet.odd,
+            1
+        );
 
-        "Valor: " +
+
+    const result =
+        amount * totalOdd;
+
+
+    alert(
+        "Cupom demonstrativo\n\n" +
+
+        "Apostas: " +
+        bets.length +
+
+        "\nCotação: " +
+        totalOdd.toFixed(2) +
+
+        "\nValor: " +
         amount.toLocaleString(
             "pt-BR",
             {
@@ -347,81 +509,16 @@ function placeBet() {
             }
         ) +
 
-        "\n\n" +
+        "\nRetorno: " +
+        result.toLocaleString(
+            "pt-BR",
+            {
+                style: "currency",
+                currency: "BRL"
+            }
+        ) +
 
-        "Este é apenas um protótipo. " +
-        "Nenhuma aposta real foi realizada."
+        "\n\nNenhuma transação real foi realizada."
     );
 
 }
-
-
-// ------------------------------------------
-// LOGIN
-// ------------------------------------------
-
-function login() {
-
-    alert(
-        "🔐 Área de login\n\n" +
-        "Sistema demonstrativo."
-    );
-
-}
-
-
-// ------------------------------------------
-// MENU DE ESPORTES
-// ------------------------------------------
-
-const sportButtons =
-    document.querySelectorAll(
-        ".sport"
-    );
-
-
-sportButtons.forEach(button => {
-
-    button.addEventListener(
-        "click",
-        function () {
-
-            // Remove ativo
-            sportButtons.forEach(
-                btn => {
-                    btn.classList.remove(
-                        "active"
-                    );
-                }
-            );
-
-
-            // Ativa clicado
-            this.classList.add(
-                "active"
-            );
-
-        }
-    );
-
-});
-
-
-// ------------------------------------------
-// INICIALIZAÇÃO
-// ------------------------------------------
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        updateBetSlip();
-
-        calculateTotal();
-
-        console.log(
-            "BetZone carregado com sucesso."
-        );
-
-    }
-);
