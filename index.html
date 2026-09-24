@@ -14,13 +14,34 @@ canvas{width:min(720px,100%);height:auto;image-rendering:pixelated;image-renderi
 <body><main class="wrap"><section class="card">
 <h1>Pokémon FireRed</h1><p>Emulador GBA com <b>mGBA compilado para WebAssembly</b>.</p>
 <div class="notice"><b>ROM:</b> o site não hospeda nem distribui a ROM. Escolha seu próprio arquivo <code>.gba</code>; ele permanece no navegador.</div>
-<div class="controls"><label class="file">CARREGAR ROM .GBA<input id="rom" type="file" accept=".gba,application/octet-stream"></label><label class="scale"><b>ESCALA</b><select id="scale"><option value="1">1x</option><option value="2" selected>2x</option><option value="3">3x</option></select></label><span id="status">Nenhuma ROM carregada.</span></div>
+<div class="controls"><label class="file">CARREGAR ROM .GBA<input id="rom" type="file" accept=".gba,application/octet-stream"></label><label class="scale"><b>ESCALA</b><select id="scale"><option value="1">1x</option><option value="2" selected>2x</option><option value="3">3x</option></select></label><label class="scale"><b>VELOCIDADE</b><select id="speed"><option value="1" selected>1x</option><option value="2">2x</option></select></label><span id="status">Nenhuma ROM carregada.</span></div>
 <div id="game"><canvas id="screen" width="240" height="160"></canvas></div>
 <div class="small">Core: mGBA/C WebAssembly. Interface: JavaScript. O emulador roda localmente no navegador.</div>
 </section></main>
 <script type="module">
 import { load } from "https://cdn.jsdelivr.net/npm/@wasm-gaming/mgba-wasm@0.1.1/dist/mgba/mgba.sdk.js";
-const input=document.getElementById("rom"),status=document.getElementById("status"),canvas=document.getElementById("screen"),scale=document.getElementById("scale");
+const input=document.getElementById("rom"),status=document.getElementById("status"),canvas=document.getElementById("screen"),scale=document.getElementById("scale"),speed=document.getElementById("speed");
+let speedMultiplier=Number(speed.value)||1;
+let romBytes=null;
+const nativeAddModule=AudioWorklet.prototype.addModule;
+AudioWorklet.prototype.addModule=async function(url,options){
+  if(speedMultiplier===1 || typeof url!=="string" || !url.startsWith("blob:")) return nativeAddModule.call(this,url,options);
+  const source=await (await fetch(url)).text();
+  const patched=source.replace("this.ratio = msg.rate / sampleRate;","this.ratio = (msg.rate / sampleRate) * 2;");
+  const patchedUrl=URL.createObjectURL(new Blob([patched],{type:"application/javascript"}));
+  try{return await nativeAddModule.call(this,patchedUrl,options)}finally{URL.revokeObjectURL(patchedUrl)}
+}
+async function startEmulator(){
+ if(!romBytes)return;
+ try{
+   status.textContent="Carregando mGBA…";
+   if(engine){try{engine.destroy?.()}catch{} engine=null}
+   engine=await load({canvasEl:canvas,assets:{rom:romBytes},options:{system:"gba",aspect:"native",idleOptimization:"remove",renderFilter:"pixelated"},persist:"opfs",storageNamespace:"pokemon-firered"});
+   engine.start();
+   status.textContent=speedMultiplier===2?"ROM carregada — velocidade 2x.":"ROM carregada — velocidade normal.";
+ }catch(err){console.error(err);status.textContent="Erro ao iniciar: "+(err?.message||String(err))}
+}
+speed.addEventListener("change",async()=>{speedMultiplier=Number(speed.value)||1;if(romBytes)await startEmulator()});
 function applyScale(){const n=Number(scale.value)||2; canvas.style.width=(240*n)+"px"; canvas.style.maxWidth="100%"; canvas.style.height="auto"}
 scale.addEventListener("change",applyScale); applyScale();
 let engine=null;
@@ -30,10 +51,8 @@ input.addEventListener("change",async()=>{
  try{
    status.textContent="Carregando mGBA WebAssembly…";
    if(engine){try{engine.destroy?.()}catch{} engine=null}
-   const bytes=new Uint8Array(await file.arrayBuffer());
-   engine=await load({canvasEl:canvas,assets:{rom:bytes},options:{system:"gba",aspect:"native",idleOptimization:"remove",renderFilter:"pixelated"},persist:"opfs",storageNamespace:"pokemon-firered"});
-   engine.start();
-   status.textContent="ROM carregada — use as setas, X/Z, A/S, Enter e Shift direito.";
+   romBytes=new Uint8Array(await file.arrayBuffer());
+   await startEmulator();
  }catch(err){
    console.error(err);
    status.textContent="Erro ao iniciar: "+(err?.message||String(err));
