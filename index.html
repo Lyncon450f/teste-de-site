@@ -1,1 +1,40 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pokémon FireRed — Web Emulator</title><style>body{margin:0;background:#17120f;color:#fff;font-family:system-ui,sans-serif;min-height:100vh;display:grid;place-items:center}.wrap{width:min(1100px,94vw);padding:28px}.card{background:#2a211c;border:3px solid #e8c86a;border-radius:14px;padding:24px;box-shadow:0 20px 70px #0008}h1{margin:0 0 8px;color:#ffdd5c;font-size:clamp(24px,4vw,42px)}p{color:#d9cfc7;line-height:1.6}.notice{background:#3b2922;border:1px solid #765648;padding:14px;border-radius:10px;margin:18px 0}.notice b{color:#ffdd5c}.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.file{padding:12px;background:#e8c86a;color:#241b17;border-radius:8px;font-weight:800;cursor:pointer}.file input{display:none}#status{font-size:13px;color:#bfb3aa}#game{width:100%;min-height:520px;margin-top:20px;background:#000;border-radius:10px;overflow:hidden}.small{font-size:12px;color:#95877f;margin-top:14px}.small a{color:#ffdd5c}</style></head><body><div class="wrap"><div class="card"><h1>Pokémon FireRed</h1><p>Emulador de Game Boy Advance rodando no navegador.</p><div class="notice"><b>Importante:</b> esta página não inclui nem distribui a ROM. Se você possui uma cópia legal da ROM, selecione o arquivo <code>.gba</code> abaixo. O arquivo é carregado localmente no seu navegador.</div><div class="controls"><label class="file">CARREGAR ROM .GBA<input id="rom" type="file" accept=".gba,application/octet-stream"></label><span id="status">Nenhuma ROM carregada.</span></div><div id="game"></div><div class="small">Emulador: <a href="https://emulatorjs.org/" target="_blank" rel="noopener">EmulatorJS</a>. O core GBA é carregado da CDN oficial do projeto.</div></div></div><script>const status=document.getElementById("status");const input=document.getElementById("rom");let romUrl=null;input.addEventListener("change",async()=>{const file=input.files&&input.files[0];if(!file)return;if(!/\.gba$/i.test(file.name)){status.textContent="Selecione um arquivo .gba.";return}status.textContent="Lendo "+file.name+"…";const reader=new FileReader();reader.onload=()=>{romUrl=reader.result;status.textContent="Iniciando emulador…";window.EJS_player="#game";window.EJS_core="gba";window.EJS_gameUrl=romUrl;window.EJS_startOnLoaded=true;window.EJS_pathtodata="https://cdn.emulatorjs.org/stable/data/";const old=document.getElementById("ejs-loader");if(old)old.remove();const s=document.createElement("script");s.id="ejs-loader";s.src="https://cdn.emulatorjs.org/latest/data/loader.js";s.onload=()=>status.textContent="Emulador carregado. Iniciando ROM…";s.onerror=()=>status.textContent="Não foi possível carregar o emulador.";document.body.appendChild(s)};reader.readAsDataURL(file)});</script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pokémon FireRed — GBA WebAssembly</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0d1117;color:#f0f6fc;font-family:system-ui,sans-serif;min-height:100vh;display:grid;place-items:center}
+.wrap{width:min(1000px,95vw);padding:24px}.card{background:#161b22;border:1px solid #30363d;border-radius:16px;padding:24px;box-shadow:0 20px 70px #0008}
+h1{margin:0 0 8px;color:#f2cc60;font-size:clamp(25px,4vw,42px)}p{color:#c9d1d9;line-height:1.55}.notice{background:#21262d;border:1px solid #484f58;padding:14px;border-radius:10px;margin:18px 0}
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.file{padding:12px 16px;background:#f2cc60;color:#111;font-weight:800;border-radius:9px;cursor:pointer}.file input{display:none}
+#status{font-size:14px;color:#8b949e}#game{width:100%;margin-top:20px;background:#000;border-radius:12px;min-height:480px;display:grid;place-items:center;overflow:hidden}
+canvas{width:min(720px,100%);height:auto;image-rendering:pixelated;image-rendering:crisp-edges;display:block}.small{font-size:12px;color:#8b949e;margin-top:14px}
+</style></head>
+<body><main class="wrap"><section class="card">
+<h1>Pokémon FireRed</h1><p>Emulador GBA com <b>mGBA compilado para WebAssembly</b>.</p>
+<div class="notice"><b>ROM:</b> o site não hospeda nem distribui a ROM. Escolha seu próprio arquivo <code>.gba</code>; ele permanece no navegador.</div>
+<div class="controls"><label class="file">CARREGAR ROM .GBA<input id="rom" type="file" accept=".gba,application/octet-stream"></label><span id="status">Nenhuma ROM carregada.</span></div>
+<div id="game"><canvas id="screen" width="240" height="160"></canvas></div>
+<div class="small">Core: mGBA/C WebAssembly. Interface: JavaScript. O emulador roda localmente no navegador.</div>
+</section></main>
+<script type="module">
+import { load } from "https://esm.sh/@wasm-gaming/mgba-wasm";
+const input=document.getElementById("rom"),status=document.getElementById("status"),canvas=document.getElementById("screen");
+let engine=null;
+input.addEventListener("change",async()=>{
+ const file=input.files?.[0]; if(!file)return;
+ if(!/\.gba$/i.test(file.name)){status.textContent="Selecione um arquivo .gba.";return}
+ try{
+   status.textContent="Carregando mGBA WebAssembly…";
+   if(engine){try{engine.destroy?.()}catch{} engine=null}
+   const bytes=new Uint8Array(await file.arrayBuffer());
+   engine=await load({canvasEl:canvas,assets:{rom:bytes},options:{system:"gba",aspect:"native",idleOptimization:"remove",renderFilter:"pixelated"},persist:"opfs",storageNamespace:"pokemon-firered"});
+   engine.start();
+   status.textContent="ROM carregada — use as setas, X/Z, A/S, Enter e Shift direito.";
+ }catch(err){
+   console.error(err);
+   status.textContent="Erro ao iniciar: "+(err?.message||String(err));
+ }
+});
+</script></body></html>
