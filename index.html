@@ -19,7 +19,7 @@ canvas{width:min(720px,100%);height:auto;image-rendering:pixelated;image-renderi
 <div class="small">Core: mGBA/C WebAssembly. Interface: JavaScript. O emulador roda localmente no navegador.</div>
 </section></main>
 <script type="module">
-import { load } from "https://esm.sh/@wasm-gaming/mgba-wasm";
+import { load } from "https://cdn.jsdelivr.net/npm/@wasm-gaming/mgba-wasm@0.1.1/dist/mgba/mgba.sdk.js";
 const input=document.getElementById("rom"),status=document.getElementById("status"),canvas=document.getElementById("screen");
 let engine=null;
 input.addEventListener("change",async()=>{
