@@ -1,1 +1,107 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brasileirão Bet</title><link rel="stylesheet" href="style.css?v=1"></head><body><header><a class="brand" href="#inicio">⚽ BRASILEIRÃO <b>BET</b></a><div class="wallet">SALDO VIRTUAL <strong id="balance">R$ 100,00</strong></div><div class="round">● JOGO <b id="roundNumber">1</b></div><button id="notificationButton">🔔<span id="notificationCount">0</span></button></header><section class="hero" id="inicio"><div><small>CENTRAL DE PALPITES</small><h1>Viva o jogo.<br><b>Faça seu palpite.</b></h1><p>Experiência virtual inspirada no Brasileirão. Um confronto por vez, saldo inicial de R$ 100 e resultado ao confirmar.</p><a href="#palpite">COMEÇAR PALPITE →</a></div><aside><small>SALDO INICIAL</small><strong id="heroBalance">100</strong><span>créditos virtuais</span></aside></section><main id="palpite"><div class="title"><div><small>AGORA EM CAMPO</small><h2 id="matchNumber">JOGO 01</h2></div><div class="progress"><label>PROGRESSO</label><i id="progressBar"></i></div></div><section class="match"><div class="meta"><span>BRASILEIRÃO • RODADA <b id="matchRound">1</b></span><span id="matchTime">Hoje • 16:00</span></div><div class="teams"><div><div class="crest" id="homeBadge">🔴</div><h3 id="homeTeam">Flamengo</h3><small>MANDANTE</small></div><div class="vs">VS<strong id="matchClock">16:00</strong></div><div><div class="crest" id="awayBadge">🟢</div><h3 id="awayTeam">Palmeiras</h3><small>VISITANTE</small></div></div><div class="choices"><button class="choice" data-pick="home"><small>CASA</small><strong id="homeChoice">Flamengo</strong><div><b id="homeOdd">1.85</b><span id="homeChance">54%</span></div><em><i id="homeChanceBar"></i></em></button><button class="choice" data-pick="draw"><small>EMPATE</small><strong>Empate</strong><div><b id="drawOdd">3.40</b><span id="drawChance">29%</span></div><em><i id="drawChanceBar"></i></em></button><button class="choice" data-pick="away"><small>FORA</small><strong id="awayChoice">Palmeiras</strong><div><b id="awayOdd">4.10</b><span id="awayChance">17%</span></div><em><i id="awayChanceBar"></i></em></button></div><div class="bet"><div><label>VALOR DO PALPITE <span>Saldo <b id="miniBalance">R$ 100,00</b></span></label><div class="input">R$ <input id="stake" type="number" min="1" value="10"></div><div class="quick"><button data-stake="5">R$ 5</button><button data-stake="10">R$ 10</button><button data-stake="25">R$ 25</button><button data-stake="50">R$ 50</button></div></div><div class="return"><small>RETORNO POTENCIAL</small><strong id="potentialReturn">R$ 0,00</strong><span id="potentialProfit">Selecione um resultado</span></div></div><div id="selectionInfo" class="info">Escolha Casa, Empate ou Fora para continuar.</div><button id="confirmButton" class="confirm" disabled>ESCOLHA UM RESULTADO →</button><p class="demo">Simulação demonstrativa • nenhum valor real é utilizado.</p></section><section class="history"><small>HISTÓRICO</small><h2>Seus palpites</h2><div id="history">Nenhum palpite realizado ainda.</div></section></main><div id="notificationPanel" class="notifications"><b>Notificações</b><button id="clearNotifications">Limpar</button><div id="notificationsList"></div></div><div id="toastContainer"></div><footer>BRASILEIRÃO <b>BET</b> • SIMULAÇÃO VIRTUAL</footer><script src="script.js?v=9"></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pokémon FireRed • Battle Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+<header>
+  <a class="brand" href="#inicio"><span class="pokeball">◓</span> POKÉMON <b>FIRERED</b></a>
+  <div class="wallet"><small>POKÉ$</small><strong id="balance">R$ 100,00</strong></div>
+  <div class="round">BATALHA <b id="roundNumber">1</b></div>
+  <button id="notificationButton" aria-label="Abrir notificações">●<span id="notificationCount">0</span></button>
+</header>
+
+<section class="hero" id="inicio">
+  <div class="hero-copy">
+    <small>PALLET TOWN • BATTLE CENTER</small>
+    <h1>Prepare seu<br><b>Pokémon!</b></h1>
+    <p>Uma experiência virtual inspirada no clima de Pokémon FireRed. Escolha seu palpite, arrisque seus créditos e descubra o resultado da batalha.</p>
+    <a href="#palpite">ENTRAR NA BATALHA →</a>
+  </div>
+  <aside class="trainer-card">
+    <div class="trainer-sprite">♟</div>
+    <small>TREINADOR</small>
+    <strong id="heroBalance">100,00</strong>
+    <span>POKÉ$ VIRTUAIS</span>
+  </aside>
+</section>
+
+<main id="palpite">
+  <div class="title">
+    <div><small>ROTA DE BATALHA</small><h2 id="matchNumber">BATALHA 01</h2></div>
+    <div class="progress"><label>BADGES</label><i id="progressBar"></i></div>
+  </div>
+
+  <section class="battle">
+    <div class="battle-top">
+      <span>◈ FIRE RED • GINÁSIO <b id="matchRound">1</b></span>
+      <span id="matchTime">HOJE • 16:00</span>
+    </div>
+
+    <div class="arena">
+      <div class="pokemon enemy">
+        <div class="hp-card"><b id="awayTeam">CHARIZARD</b><span>Lv. 36</span><div class="hp"><i></i></div></div>
+        <div class="sprite flame" id="awayBadge">🔥</div>
+        <small>OPONENTE</small>
+      </div>
+      <div class="versus"><span>VS</span><strong id="matchClock">16:00</strong></div>
+      <div class="pokemon player">
+        <div class="sprite" id="homeBadge">⚡</div>
+        <small>SEU POKÉMON</small>
+        <div class="hp-card"><b id="homeTeam">PIKACHU</b><span>Lv. 28</span><div class="hp"><i></i></div></div>
+      </div>
+    </div>
+
+    <div class="battle-message"><b>O que o seu Pokémon fará?</b><span>Escolha um resultado para registrar seu palpite.</span></div>
+
+    <div class="choices">
+      <button class="choice" data-pick="home">
+        <small>ATACAR</small><strong id="homeChoice">Pikachu vence</strong>
+        <div><b id="homeOdd">1.85</b><span id="homeChance">54%</span></div>
+        <em><i id="homeChanceBar"></i></em>
+      </button>
+      <button class="choice" data-pick="draw">
+        <small>TÉCNICA</small><strong>Empate</strong>
+        <div><b id="drawOdd">3.40</b><span id="drawChance">29%</span></div>
+        <em><i id="drawChanceBar"></i></em>
+      </button>
+      <button class="choice" data-pick="away">
+        <small>DEFENDER</small><strong id="awayChoice">Charizard vence</strong>
+        <div><b id="awayOdd">4.10</b><span id="awayChance">17%</span></div>
+        <em><i id="awayChanceBar"></i></em>
+      </button>
+    </div>
+
+    <div class="bet">
+      <div>
+        <label>POKÉ$ PARA A BATALHA <span>Saldo <b id="miniBalance">R$ 100,00</b></span></label>
+        <div class="input">₽ <input id="stake" type="number" min="1" value="10"></div>
+        <div class="quick"><button data-stake="5">5 POKÉ$</button><button data-stake="10">10 POKÉ$</button><button data-stake="25">25 POKÉ$</button><button data-stake="50">50 POKÉ$</button></div>
+      </div>
+      <div class="return"><small>PRÊMIO POTENCIAL</small><strong id="potentialReturn">R$ 0,00</strong><span id="potentialProfit">Escolha seu movimento</span></div>
+    </div>
+
+    <div id="selectionInfo" class="info">Escolha ATACAR, TÉCNICA ou DEFENDER para continuar.</div>
+    <button id="confirmButton" class="confirm" disabled>ESCOLHA UM MOVIMENTO →</button>
+    <p class="demo">Modo demonstração • nenhum dinheiro real é utilizado.</p>
+  </section>
+
+  <section class="history">
+    <small>POKÉDEX DE BATALHAS</small>
+    <h2>Histórico do treinador</h2>
+    <div id="history">Nenhuma batalha registrada ainda.</div>
+  </section>
+</main>
+
+<div id="notificationPanel" class="notifications"><b>PokéGear</b><button id="clearNotifications">Limpar</button><div id="notificationsList"></div></div>
+<div id="toastContainer"></div>
+<footer>POKÉMON FIRERED • BATTLE CENTER • SIMULAÇÃO VIRTUAL</footer>
+<script src="script.js?v=10"></script>
+</body>
+</html>
