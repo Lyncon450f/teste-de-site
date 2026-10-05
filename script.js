@@ -20,39 +20,15 @@ const teams=[
   {name:"Bragantino",badge:"https://commons.wikimedia.org/wiki/Special:Redirect/file/Red_Bull_Bragantino_logo.svg"},
   {name:"Juventude",badge:"https://commons.wikimedia.org/wiki/Special:Redirect/file/Esporte_Clube_Juventude.svg"}
 ];
-
 const games=[
-  ["Flamengo","Palmeiras","16:00",[1.85,3.4,4.1]],
-  ["Corinthians","São Paulo","18:30",[2.35,3.1,2.65]],
-  ["Santos","Grêmio","21:00",[2.1,3.2,2.8]],
-  ["Bahia","Cruzeiro","19:00",[2.25,3.15,2.9]],
-  ["Fluminense","Botafogo","20:30",[2.05,3.3,3.05]],
-  ["Vasco","Atlético-MG","16:00",[2.7,3.2,2.25]],
-  ["Athletico-PR","Fortaleza","18:00",[2.0,3.25,3.4]],
-  ["Ceará","Sport","20:00",[2.15,3.1,3.1]],
-  ["Vitória","Bragantino","17:30",[2.8,3.25,2.2]],
-  ["Juventude","Internacional","21:30",[3.15,3.15,2.05]]
-].map(([h,a,time,odds])=>({
-  home:h,away:a,time,odds,
-  hb:teams.find(t=>t.name===h)?.badge,
-  ab:teams.find(t=>t.name===a)?.badge
-}));
-
+  ["Flamengo","Palmeiras","16:00",[1.85,3.4,4.1]],["Corinthians","São Paulo","18:30",[2.35,3.1,2.65]],["Santos","Grêmio","21:00",[2.1,3.2,2.8]],["Bahia","Cruzeiro","19:00",[2.25,3.15,2.9]],["Fluminense","Botafogo","20:30",[2.05,3.3,3.05]],["Vasco","Atlético-MG","16:00",[2.7,3.2,2.25]],["Athletico-PR","Fortaleza","18:00",[2.0,3.25,3.4]],["Ceará","Sport","20:00",[2.15,3.1,3.1]],["Vitória","Bragantino","17:30",[2.8,3.25,2.2]],["Juventude","Internacional","21:30",[3.15,3.15,2.05]]
+].map(([h,a,time,odds])=>({home:h,away:a,time,odds,hb:teams.find(t=>t.name===h)?.badge,ab:teams.find(t=>t.name===a)?.badge}));
 let n=0,balance=100,selected=null,hist=[],notes=[];
 const $=x=>document.getElementById(x),money=x=>"R$ "+Number(x).toFixed(2).replace(".",",");
 function p(g){let a=g.odds.map(x=>1/x),s=a.reduce((x,y)=>x+y,0);return a.map(x=>Math.round(x/s*100))}
 function badgeHTML(url,name){return url?"<img src='"+url+"' alt='Escudo do "+safe(name)+"' loading='lazy' onerror=\"this.style.display='none';this.parentElement.textContent='⚽'\">":"⚽"}
-function balanceUI(){$("balance").textContent=money(balance);$("miniBalance").textContent=money(balance);$("heroBalance").textContent=balance.toFixed(2).replace(". ",",")}
-function render(){
-  let g=games[n],q=p(g);
-  $("roundNumber").textContent=n+1;$("matchRound").textContent=n+1;$("matchNumber").textContent="JOGO "+String(n+1).padStart(2,"0");
-  $("progressBar").style.width=((n+1)/games.length*100)+"%";$("matchTime").textContent="Hoje • "+g.time;$("matchClock").textContent=g.time;
-  $("homeTeam").textContent=g.home;$("awayTeam").textContent=g.away;$("homeChoice").textContent=g.home;$("awayChoice").textContent=g.away;
-  $("homeBadge").innerHTML=badgeHTML(g.hb,g.home);$("awayBadge").innerHTML=badgeHTML(g.ab,g.away);
-  ["home","draw","away"].forEach((x,i)=>{$(x+"Odd").textContent=g.odds[i].toFixed(2);$(x+"Chance").textContent=q[i]+"%";$(x+"ChanceBar").style.width=q[i]+"%"});
-  selected=null;document.querySelectorAll(".choice").forEach(x=>{x.classList.remove("selected");x.disabled=false});
-  $("stake").max=balance;$("stake").value=Math.min(10,Math.max(1,balance));balanceUI();betUI()
-}
+function balanceUI(){$("balance").textContent=money(balance);$("miniBalance").textContent=money(balance);$("heroBalance").textContent=balance.toFixed(2).replace(".",",")}
+function render(){let g=games[n],q=p(g);$("roundNumber").textContent=n+1;$("matchRound").textContent=n+1;$("matchNumber").textContent="JOGO "+String(n+1).padStart(2,"0");$("progressBar").style.width=((n+1)/games.length*100)+"%";$("matchTime").textContent="Hoje • "+g.time;$("matchClock").textContent=g.time;$("homeTeam").textContent=g.home;$("awayTeam").textContent=g.away;$("homeChoice").textContent=g.home;$("awayChoice").textContent=g.away;$("homeBadge").innerHTML=badgeHTML(g.hb,g.home);$("awayBadge").innerHTML=badgeHTML(g.ab,g.away);["home","draw","away"].forEach((x,i)=>{$(x+"Odd").textContent=g.odds[i].toFixed(2);$(x+"Chance").textContent=q[i]+"%";$(x+"ChanceBar").style.width=q[i]+"%"});selected=null;document.querySelectorAll(".choice").forEach(x=>{x.classList.remove("selected");x.disabled=false});$("stake").max=balance;$("stake").value=Math.min(10,Math.max(1,balance));balanceUI();betUI()}
 function betUI(){let v=Math.min(Math.max(Number($("stake").value)||0,0),balance),g=games[n],i=selected==="home"?0:selected==="draw"?1:2,r=selected?v*g.odds[i]:0;$("potentialReturn").textContent=money(r);$("potentialProfit").textContent=selected?"Lucro possível: "+money(Math.max(0,r-v)):"Selecione um resultado";let b=$("confirmButton");if(!selected){$("selectionInfo").className="info";$("selectionInfo").textContent="Escolha Casa, Empate ou Fora para continuar.";b.disabled=true;b.textContent="ESCOLHA UM RESULTADO →";return}let q=p(g);$("selectionInfo").className="info active";$("selectionInfo").innerHTML="Chance de ganhar: <span class='win'>"+q[i]+"%</span> • chance de perder: <span class='lose'>"+(100-q[i])+"%</span>";b.disabled=v<1||v>balance;b.textContent="CONFIRMAR PALPITE →"}
 function safe(x){return String(x).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
 function toast(t,m){let x=document.createElement("div");x.className="toast";x.innerHTML="<b>"+safe(t)+"</b><p>"+safe(m)+"</p>";$("toastContainer").appendChild(x);setTimeout(()=>x.remove(),2600)}
